@@ -1,5 +1,4 @@
 local lib = require("neotest.lib")
-local logger = require("neotest.logger")
 local async = require("neotest.async")
 local output = require("neotest-klib.output")
 local spec = require("neotest-klib.spec")
