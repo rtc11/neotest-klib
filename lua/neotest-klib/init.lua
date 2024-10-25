@@ -10,8 +10,9 @@ local adapter = { name = "neotest-klib" }
 ---@return string | nil @Absolute root dir of test suite
 function adapter.root(dir)
     print("init.root", vim.inspect(dir))
-    local root = lib.files.match_root_pattern("Makefile", dir)
-    print("init.root returns", root, vim.inspect(root))
+    -- local root = lib.files.match_root_pattern("Makefile", dir)
+    local root =  dir .. "/test"
+    print("init.root=", root)
     return root
 end
 
