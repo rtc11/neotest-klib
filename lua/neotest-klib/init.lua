@@ -11,7 +11,7 @@ local adapter = { name = "neotest-klib" }
 function adapter.root(dir)
     print("init.root", vim.inspect(dir))
     local root = lib.files.match_root_pattern("Makefile", dir)
-    print("init.root returns", root)
+    print("init.root returns", root, vim.inspect(root))
     return root
 end
 
