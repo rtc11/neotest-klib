@@ -6,13 +6,13 @@ local function get_pkg_name(path)
     return first_line:gsub('^package ', '')
 end
 
-local function get_namespace(namespaces)
+local function get_class(namespaces)
     local names = vim.tbl_map(function(namespace)
         return namespace.handle_name
     end, namespaces)
 
     local full_ns = table.concat(names, '.')
-    return #full_ns > 0 and (full_ns .. '.') or ''
+    return #full_ns > 0 and full_ns or ''
 end
 
 local function get_pos_name(name)
@@ -30,17 +30,16 @@ end
 
 --- Build a position ID from a position and its parents
 function M.build_pos_id(position, parents)
-    print("pos.build_pos_id", vim.inspect(position), vim.inspect(parents))
     local pkg_name = get_pkg_name(position.path)
-    local namespace = get_namespace(parents)
+    local class_name = get_class(parents)
     local pos_name = get_pos_name(position.handle_name)
-    return pkg_name .. '.' .. namespace .. pos_name
+    return pkg_name  .. '.' .. class_name .. pos_name
 end
 
 --- Build a position from a file path and a set of captured nodes
 function M.build_pos(file_path, source, captured_nodes)
-    print("pos.build_pos", vim.inspect(file_path), vim.inspect(source), vim.inspect(captured_nodes))
     local node_type = get_captured_node_type(captured_nodes)
+    -- print("node_type", vim.inspect(node_type))
     local handle_name = vim.treesitter.get_node_text(captured_nodes[node_type .. '.name'], source)
     local definition = captured_nodes[node_type .. '.definition']
     local name = handle_name:gsub('`', '')
@@ -53,24 +52,30 @@ function M.build_pos(file_path, source, captured_nodes)
     }
 end
 
-function M.query()
-    local plain_class = [[
-        (
-            (class_declaration (type_identifier) @namespace.name)
-        ) @namespace.definition
-    ]]
+M.test_functions = [[
+    ; query for test function
+    (
+        (function_declaration
+            (modifiers (annotation (user_type (type_identifier) @test_marker.identifier)))
+            (simple_identifier) @test.name
+        )
+        (#eq? @test_marker.identifier "Test")
+    ) @test.definition
+]]
 
-    local fun_with_test = [[
-        (
-            (function_declaration 
-                (modifiers (annotation (user_type (type_identifier) @test_marker.identifier)))
-                (simple_identifier) @test.name
-            )
-            (#eq? @test_marker.identifier "Test")
-        ) @test.definition
-    ]]
+M.package = [[
+    ; query for package
+    (
+        (package_header 
+            (simple_identifier) @package.name
+    ) @package.definition
+]]
 
-    return plain_class .. fun_with_test
-end
+M.test_classes = [[
+    ; query for test classes
+    (
+        (class_declaration (type_identifier) @namespace.name)
+    ) @namespace.definition
+]]
 
 return M
