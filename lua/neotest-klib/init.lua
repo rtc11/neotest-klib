@@ -2,7 +2,6 @@ local lib = require("neotest.lib")
 local output = require("neotest-klib.output")
 local spec = require("neotest-klib.spec")
 local pos = require("neotest-klib.pos")
-local log = require("neotest.logging")
 
 local adapter = { name = "neotest-klib" }
 
@@ -10,8 +9,9 @@ local adapter = { name = "neotest-klib" }
 ---@param dir string @Directory to treat as cwd
 ---@return string | nil @Absolute root dir of test suite
 function adapter.root(dir)
+    print("init.root", vim.inspect(dir))
     local root = lib.files.match_root_pattern("Makefile", dir)
-    log.info("root dir", root)
+    print("init.root returns", root)
     return root
 end
 
@@ -19,13 +19,13 @@ end
 ---@param name string Name of directory
 ---@return boolean
 function adapter.filter_dir(name, _, _)
-    local deny = { '.libs', 'src', '.res', '.git' }
+    local deny = { '.libs', '.build', 'src', '.res', '.git' }
     for _, dir in ipairs(deny) do
         if dir == name then
-            log.info("denied dir", name)
+            print("denied dir:", name)
             return false
         end
-        log.info("allowed dir", name)
+        print("allowed dir:", name)
         return true
     end
 end
@@ -34,8 +34,8 @@ end
 ---@param file_path string
 ---@return boolean
 function adapter.is_test_file(file_path)
+    print("init.is_test_file", vim.inspect(file_path))
     local is_test_file = file_path:match("Test.kt$")
-    log.info("file:", file_path, "is test:", is_test_file)
     return is_test_file
 end
 
@@ -43,8 +43,8 @@ end
 ---@param file_path string Absolute file path
 ---@return neotest.Tree | nil
 function adapter.discover_positions(file_path)
+    print("init.discover_positions", vim.inspect(file_path))
     local pos_query = pos.query
-    log.info("query", pos_query)
     return lib.treesitter.parse_positions(file_path, pos_query, {
         require_namespaces = false,
         nested_tests = false,
@@ -57,7 +57,7 @@ end
 ---@param _args neotest.RunArgs
 ---@return nil | neotest.RunSpec | neotest.RunSpec[]
 function adapter.build_spec(_args)
-    log.info("build spec", _args)
+    print("init.build_spec", vim.inspect(_args))
     return spec.build(_args)
 end
 
@@ -67,7 +67,7 @@ end
 ---@param _tree neotest.Tree
 ---@return table<string, neotest.Result>
 function adapter.results(_spec, _res, _tree)
-    log.info("results", _spec, _res, _tree)
+    print("init.results", vim.inspect(_spec), vim.inspect(_res), vim.inspect(_tree))
     return output.result(_spec, _res, _tree)
 end
 

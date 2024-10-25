@@ -5,6 +5,7 @@ local output = require("neotest-klib.output")
 local M = {}
 
 local function namespaces(tree)
+    print("spec.namespaces", vim.inspect(tree))
     local nss = {}
     for _, pos in tree:iter() do
         table.insert(nss, pos)
@@ -14,6 +15,7 @@ local function namespaces(tree)
 end
 
 local function test_args(tree, pos)
+    print("spec.test_args", vim.inspect(tree), vim.inspect(pos))
     local args = {}
     if pos.type == 'test' or pos.type == 'namespace' then
         vim.list_extend(args, { '-t', '"' .. pos.id .. '"' })
@@ -26,8 +28,8 @@ local function test_args(tree, pos)
 end
 
 function M.build(args)
+    print("spec.build", vim.inspect(args))
     local pos = args.tree:data()
-    print("pos: " .. vim.inspect(pos))
     local dir = lib.files.match_root_pattern("Makefile", pos.path)
     local test = { dir .. '/test.sh' }
     local res_path = async.fn.tempname() .. ".json"
