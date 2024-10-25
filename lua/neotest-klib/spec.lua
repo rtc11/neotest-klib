@@ -30,8 +30,10 @@ end
 function M.build(args)
     print("spec.build", vim.inspect(args))
     local pos = args.tree:data()
-    local dir = lib.files.match_root_pattern("Makefile", pos.path)
-    local test = { dir .. '/test.sh' }
+    local dir = pos.path --lib.files.match_root_pattern("Makefile", pos.path)
+    print("cwd:", vim.inspect(vim.fn.getcwd()))
+
+    local test = { vim.fn.getcwd() .. '/test.sh' }
     local res_path = async.fn.tempname() .. ".json"
     lib.files.write(res_path, "")
 
