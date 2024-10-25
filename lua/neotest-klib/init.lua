@@ -14,7 +14,7 @@ end
 
 ---@async
 function adapter.filter_dir(name, _, _)
-    local deny = { '.libs', 'src', 'test', '.res', '.git' }
+    local deny = { '.libs', 'src', '.res', '.git' }
     for _, dir in ipairs(deny) do
         if dir == name then
             return false
