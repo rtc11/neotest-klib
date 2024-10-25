@@ -29,7 +29,7 @@ function M.build(args)
     local pos = args.tree:data()
     print("pos: " .. vim.inspect(pos))
     local dir = lib.files.match_root_pattern("Makefile", pos.path)
-    local test = { dir .. 'test.sh' }
+    local test = { dir .. '/test.sh' }
     local res_path = async.fn.tempname() .. ".json"
     lib.files.write(res_path, "")
 
