@@ -5,16 +5,15 @@ local output = require("neotest-klib.output")
 local M = {}
 
 local function test_args(pos)
-    print("test", vim.inspect(pos))
     local args = {}
     if pos.type == 'test' then
-        local class = pos.id:gsub(pos.name, '')
-        vim.list_extend(args, { '-c', class , "-t", '"' .. pos.name .. '"' })
-    -- TODO: this namespace is uneccessary
-    elseif pos.type == 'namespace' then
-        vim.list_extend(args, { '-c', pos.id })
+        local ns = pos.id:gsub(pos.name, '')
+        local class = pos.path:match("([^/]+)%.kt$")
+        vim.list_extend(args, { '--class', ns .. class , "--test", '"' .. pos.name .. '"' })
     elseif pos.type == 'file' then
-        -- noop
+        vim.list_extend(args, { '--path', pos.path })
+    elseif pos.type == 'dir' then
+        vim.list_extend(args, { '--path', pos.path })
     end
     return args
 end

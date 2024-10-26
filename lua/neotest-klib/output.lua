@@ -36,7 +36,7 @@ function M.parse(lines, path, pos_id)
     for _, line in ipairs(lines) do
         local res = parse_line(line, path)
         if not res.id then
-            print("no id", vim.inspect(pos_id)) -- todo log more
+            -- print("no id", vim.inspect(pos_id)) -- todo log more
             -- noop
         else
             results[pos_id] = res

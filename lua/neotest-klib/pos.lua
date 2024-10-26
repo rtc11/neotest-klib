@@ -26,6 +26,9 @@ local function get_captured_node_type(captured_nodes)
     if captured_nodes['namespace.name'] then
         return 'namespace'
     end
+    if captured_nodes['class.name'] then
+        return 'class'
+    end
 end
 
 --- Build a position ID from a position and its parents
@@ -39,7 +42,6 @@ end
 --- Build a position from a file path and a set of captured nodes
 function M.build_pos(file_path, source, captured_nodes)
     local node_type = get_captured_node_type(captured_nodes)
-    -- print("node_type", vim.inspect(node_type))
     local handle_name = vim.treesitter.get_node_text(captured_nodes[node_type .. '.name'], source)
     local definition = captured_nodes[node_type .. '.definition']
     local name = handle_name:gsub('`', '')
@@ -63,19 +65,18 @@ M.test_functions = [[
     ) @test.definition
 ]]
 
-M.package = [[
+M.namespace = [[
     ; query for package
     (
-        (package_header 
-            (simple_identifier) @package.name
-    ) @package.definition
+        (package_header (identifier) @namespace.name)
+    ) @namespace.definition
 ]]
 
-M.test_classes = [[
+M.class = [[
     ; query for test classes
     (
-        (class_declaration (type_identifier) @namespace.name)
-    ) @namespace.definition
+        (class_declaration (type_identifier) @class.name)
+    ) @class.definition
 ]]
 
 return M

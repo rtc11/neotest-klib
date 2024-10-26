@@ -35,8 +35,8 @@ end
 ---@async
 ---@param file_path string Absolute file path
 function adapter.discover_positions(file_path)
-    -- local pos_query = pos.test_classes .. pos.test_functions
-    local pos_query = pos.test_classes .. pos.test_functions
+    -- local pos_query = pos.namespace .. pos.class .. pos.test_functions
+    local pos_query = pos.test_functions
     local opt = {
         require_namespaces = false,
         nested_tests = true,
