@@ -4,17 +4,55 @@ local output = require("neotest-klib.output")
 
 local M = {}
 
-local function test_args(pos)
-    local args = {}
-    if pos.type == 'test' then
-        local ns = pos.id:gsub(pos.name, '')
-        local class = pos.path:match("([^/]+)%.kt$")
-        vim.list_extend(args, { '--class', ns .. class , "--test", '"' .. pos.name .. '"' })
-    elseif pos.type == 'file' then
-        vim.list_extend(args, { '--path', pos.path })
-    elseif pos.type == 'dir' then
-        vim.list_extend(args, { '--path', pos.path })
+-- find everything after the last / and before the .kt
+local regex_classname = "([^/]+)%.kt$"
+
+-- find everything after /test/ and before the last / 
+local regex_namespace = "/test/([^/]+)/"
+
+-- find everything after /test
+local regex_resource = "/test/"
+
+-- find everything after /test/ and before the .kt
+local regex_package = "/test/[^/]+/([^/]+)%.kt$"
+
+local function namespace(pos)
+    if not pos.path:match(regex_namespace) then
+        return ""
+    else
+        return pos.id:gsub(pos.name, ''):gsub(' ', '')
     end
+end
+
+local function test_args(pos)
+    -- print("test", vim.inspect(pos))
+    local args = {}
+
+    if pos.type == 'test' then
+        local ns = namespace(pos)
+        local class = pos.path:match(regex_classname)
+        local test = '"' .. pos.name .. '"'
+        vim.list_extend(args, { '-c', ns .. class , "-t", test })
+
+    elseif pos.type == 'class' then
+
+        if not pos.path:match(regex_namespace) then
+            local class = pos.path:match(regex_classname)
+            vim.list_extend(args, { '-c', class })
+        else
+            vim.list_extend(args, { '-c', pos.id })
+        end
+
+    elseif pos.type == 'file' then
+
+        vim.list_extend(args, { '-f', pos.path })
+
+    elseif pos.type == 'dir' then
+
+        vim.list_extend(args, { '-p', pos.name })
+
+    end
+
     return args
 end
 

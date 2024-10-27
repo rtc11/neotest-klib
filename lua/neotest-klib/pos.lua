@@ -3,7 +3,7 @@ local M = {}
 
 local function get_pkg_name(path)
     local first_line = lib.files.read_lines(path)[1]
-    return first_line:gsub('^package ', '')
+    return first_line:gsub('^package ', ''):gsub(' ', '')
 end
 
 local function get_class(namespaces)
@@ -36,7 +36,8 @@ function M.build_pos_id(position, parents)
     local pkg_name = get_pkg_name(position.path)
     local class_name = get_class(parents)
     local pos_name = get_pos_name(position.handle_name)
-    return pkg_name  .. '.' .. class_name .. pos_name
+    local result = pkg_name  .. '.' .. class_name .. pos_name
+    return result
 end
 
 --- Build a position from a file path and a set of captured nodes
