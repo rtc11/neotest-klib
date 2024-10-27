@@ -73,6 +73,7 @@ M.namespace = [[
     ) @namespace.definition
 ]]
 
+-- TODO: remove classes without @Test annotated functions
 M.class = [[
     ; query for test classes
     (
