@@ -1,5 +1,5 @@
 # neotest-klib
-klib test-adapter for neotest.
+[klib](https://github.com/rtc11/klib) adapter for [neotest](https://github.com/nvim-neotest/neotest).
 
 
 ```
